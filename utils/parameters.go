@@ -18,7 +18,7 @@ func (p *Parameters) Format() string {
 	if len(p.params) == 0 {
 		return ""
 	}
-	return "?" + strings.Join(p.params, "&&")
+	return "?" + strings.Join(p.params, "&")
 }
 
 func (p *Parameters) Count(amount int) {

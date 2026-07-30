@@ -18,7 +18,7 @@ func (c *Client) DatumFromHash(hash string) (*models.DatumFromHash, error) {
 		return nil, fmt.Errorf("empty response")
 	}
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("unexpected error: %d", resp.Body)
+		return nil, newAPIError(resp)
 	}
 	defer resp.Body.Close() //nolint:errcheck
 	var datum models.DatumFromHash

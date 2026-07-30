@@ -3,7 +3,6 @@ package client
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -62,14 +61,11 @@ func (c *Client) sendRequest(req *http.Request, responseBody *string) error {
 		return fmt.Errorf("empty response")
 	}
 
-	// Try to unmarshall into errorResponse
+	// newAPIError reports the status code alongside any message the API
+	// supplied, and closes the body so a non-2xx response cannot leak the
+	// connection.
 	if resp.StatusCode != http.StatusOK {
-		var errRes errorResponse
-		if err = json.NewDecoder(resp.Body).Decode(&errRes); err == nil {
-			return errors.New(errRes.Message)
-		}
-
-		return fmt.Errorf("unknown error, status code: %d", resp.StatusCode)
+		return newAPIError(resp)
 	}
 
 	respBodyBytes, err := io.ReadAll(resp.Body)
